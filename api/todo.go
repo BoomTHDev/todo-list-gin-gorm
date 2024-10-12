@@ -5,6 +5,7 @@ import (
 	// "gin-todo/database"
 	// "io"
 	// "log"
+	"gin-todo/database"
 	"net/http"
 	// "os"
 
@@ -27,6 +28,8 @@ func CreateTodoList(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	todoList := database.Todo{Username: input.Username, Title: input.Title, Message: input.Message}
+	database.DB.Create(&todoList)
 
-	c.JSON(http.StatusOK, gin.H{"data input": input})
+	c.JSON(http.StatusOK, gin.H{"Result": todoList})
 }
