@@ -14,7 +14,10 @@ func main() {
 	database.ConnectDatabase()
 
 	r.GET("/todos", api.GetAllLists)
+	r.GET("/todo", api.GetTodoList)
+	r.GET("/list/:id", api.GetList)
 	r.POST("/todo", api.CreateTodoList)
+	r.DELETE("/todo/:id", api.DeleteTodo)
 
 	r.Run()
 }

@@ -19,7 +19,9 @@ type CreateTodo struct {
 }
 
 func GetAllLists(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	var todoLists []database.Todo
+	database.DB.Find(&todoLists)
+	c.JSON(http.StatusOK, gin.H{"Result": todoLists})
 }
 
 func CreateTodoList(c *gin.Context) {
@@ -32,4 +34,34 @@ func CreateTodoList(c *gin.Context) {
 	database.DB.Create(&todoList)
 
 	c.JSON(http.StatusOK, gin.H{"Result": todoList})
+}
+
+func GetTodoList(c *gin.Context) {
+	var todoLists []database.Todo
+	if err := database.DB.Where("username = ?", c.Query("username")).Find(&todoLists).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"todoList": todoLists})
+}
+
+func DeleteTodo(c *gin.Context) {
+	var todoList database.Todo
+	if err := database.DB.Where("id = ?", c.Param("id")).First(&todoList).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	database.DB.Delete(&todoList)
+	c.JSON(http.StatusOK, gin.H{"message": "delete success"})
+}
+
+func GetList(c *gin.Context) {
+	var todolist database.Todo
+	if err := database.DB.Where("id = ?", c.Param("id")).First(&todolist).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"list": todolist})
 }
